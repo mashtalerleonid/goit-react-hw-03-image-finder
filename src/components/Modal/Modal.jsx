@@ -26,17 +26,12 @@ class Modal extends Component {
   };
 
   render() {
+    const { handleClose, children } = this.props;
+
     return createPortal(
       <div className="Overlay" onClick={this.handleBackdropClick}>
-        <div className="Modal">
-          {this.props.children}
-          {/* <img src="" alt="" /> */}
-        </div>
-        <button
-          className="Close"
-          type="button"
-          onClick={this.props.handleClose}
-        >
+        <div className="Modal">{children}</div>
+        <button className="Close" type="button" onClick={handleClose}>
           <CloseIcon width="30" />
         </button>
       </div>,

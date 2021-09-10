@@ -1,42 +1,59 @@
 import React, { Component } from "react";
 import Searchbar from "./components/Searchbar";
-import Button from "./components/Button";
-// import Loader from "./components/Loader";
 import ImageGallery from "./components/ImageGallery";
 import Modal from "./components/Modal";
-import Loader from "react-loader-spinner";
-import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 class App extends Component {
   state = {
-    showModal: false,
+    selectedImageUrl: null,
+    query: "",
+    page: 1,
   };
 
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({ showModal: !showModal }));
+  closeModal = (e) => {
+    this.setState({ selectedImageUrl: null });
+  };
+
+  handleSubmit = (query) => {
+    this.setState({ query, page: 1 });
+  };
+
+  handleSelectImage = (imageUrl) => {
+    this.setState({ selectedImageUrl: imageUrl });
+  };
+
+  incrementPage = () => {
+    this.setState((prevState) => ({ page: prevState.page + 1 }));
+  };
+
+  makeNotification = (text) => {
+    toast(text, {
+      autoClose: 2500,
+      type: "info",
+      theme: "colored",
+    });
   };
 
   render() {
-    const { showModal } = this.state;
+    const { selectedImageUrl, query, page } = this.state;
+
     return (
       <div>
-        <button type="button" onClick={this.toggleModal}>
-          Open modal
-        </button>
-        <Searchbar />
-        <ImageGallery />
-        {/* <Button /> */}
-        <Loader
-          type="Rings"
-          color="#00BFFF"
-          height={100}
-          width={100}
-          timeout={3000} //3 secs
+        <Searchbar submit={this.handleSubmit} notify={this.makeNotification} />
+
+        <ImageGallery
+          query={query}
+          onSelect={this.handleSelectImage}
+          incrementPage={this.incrementPage}
+          page={page}
+          notify={this.makeNotification}
         />
 
-        {showModal && (
-          <Modal handleClose={this.toggleModal}>
-            <img src="" alt="" />
+        {selectedImageUrl && (
+          <Modal handleClose={this.closeModal}>
+            <img src={selectedImageUrl} alt="" />
           </Modal>
         )}
       </div>
